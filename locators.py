@@ -58,13 +58,22 @@ class Locators:
     CONSTRUCTOR = (By.XPATH, ".//a[p[text()='Конструктор']]")
 
     # 6.1. Кнопка "Булки"
-    BUNS_BUTTON = (By.XPATH, ".//span[contains(text(),'Булки')]")
+    BUNS_BUTTON = (By.XPATH, ".//div[contains(@class, 'tab_tab__1SPyG') and not(contains(@class, 'tab_tab_type_current__2BEPc')) and .//span[text()='Булки']]")
+
+    # 6.1.1. Активная кнопка "Булки"
+    ACTIVE_TAB_BUNS = (By.XPATH, ".//div[contains(@class, 'tab_tab_type_current__2BEPc') and span[text()='Булки']]")
 
     # 6.2. Кнопка "Соусы"
     SAUCES_BUTTON = (By.XPATH, ".//span[text()='Соусы']")
 
+    # 6.2.1. Активная кнопка "Соусы"
+    ACTIVE_TAB_SAUCES = (By.XPATH, "//div[contains(@class, 'tab_tab_type_current__2BEPc') and span[text()='Соусы']]")
+
     # 6.3. Кнопка "Начинки"
     FILLINGS_BUTTON = (By.XPATH, ".//span[text()='Начинки']")
+
+    # 6.3.1. Активная кнопка "Начинки"
+    ACTIVE_TAB_FILLINGS = (By.XPATH, ".//div[contains(@class, 'tab_tab_type_current__2BEPc') and span[text()='Начинки']]")
 
     # 7.1. Кнопка логотипа "Stella Burgers@
     LOGO_STELLA_BURGERS = (By.TAG_NAME, "svg")

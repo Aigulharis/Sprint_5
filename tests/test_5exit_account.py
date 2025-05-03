@@ -1,36 +1,32 @@
-import unittest
+import pytest
 import time
-
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from locators import Locators
 from data import Credentials
 
+@pytest.fixture
+def driver():
+    driver = webdriver.Chrome()
+    driver.get("https://stellarburgers.nomoreparties.site/")
+    yield driver
+    driver.quit()
 
-class TestExitAccount(unittest.TestCase):
+def test_exit_account_button_personal_account_success(driver):
+    driver.find_element(*Locators.PERSONAL_ACCOUNT_BUTTON).click()  # вход в ЛК
 
-    def setUp(self):
-        self.driver = webdriver.Chrome()
-        self.driver.get("https://stellarburgers.nomoreparties.site/")
-    # Проверяем кнопку выход в личном кабинете
-    def test_exit_account_button_personal_account_success(self):
-        driver = self.driver
-        #WebDriverWait(driver, 10)
-        driver.find_element(*Locators.PERSONAL_ACCOUNT_BUTTON).click()# вход в ЛК
+    email_account = driver.find_element(*Locators.EMAIL_ACCOUNT)
+    email_account.send_keys(Credentials.VALID_EMAIL)
 
-        # Заполнение полей формы
-        email_account = driver.find_element(*Locators.EMAIL_ACCOUNT)
-        email_account.send_keys(Credentials.VALID_EMAIL)
+    password_account = driver.find_element(*Locators.PASSWORD_ACCOUNT)
+    password_account.send_keys(Credentials.VALID_PASSWORD)
 
-        password_account = driver.find_element(*Locators.PASSWORD_ACCOUNT)
-        password_account.send_keys(Credentials.VALID_PASSWORD)
+    driver.find_element(*Locators.LOGIN_BUTTON).click()  # вход
 
-        driver.find_element(*Locators.LOGIN_BUTTON).click() # вход
-        driver.find_element(*Locators.PERSONAL_ACCOUNT_BUTTON).click()  # вход в ЛК
-        WebDriverWait(driver, 10).until(EC.element_to_be_clickable(Locators.EXIT_BUTTON))
-        driver.find_element(*Locators.EXIT_BUTTON).click() # выход
+    driver.find_element(*Locators.PERSONAL_ACCOUNT_BUTTON).click()  # вход в ЛК снова
 
-
-if __name__ == "__main__":
-    unittest.main()
+    WebDriverWait(driver, 5).until(EC.element_to_be_clickable(Locators.EXIT_BUTTON))
+    driver.find_element(*Locators.EXIT_BUTTON).click()  # выход
+    WebDriverWait(driver, 5).until(EC.element_to_be_clickable(Locators.LOGIN_BUTTON))
+    assert driver.find_element(*Locators.LOGIN_BUTTON).is_displayed()

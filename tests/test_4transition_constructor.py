@@ -1,63 +1,48 @@
-import unittest
-from datetime import time
-
+import pytest
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from locators import Locators
 from data import Credentials
 
+@pytest.fixture
+def driver():
+    driver = webdriver.Chrome()
+    driver.get("https://stellarburgers.nomoreparties.site/")
+    yield driver
+    driver.quit()
+    # Переход из Личного кабинета в Конструктор
+def test_login_through_personal_account_button_success(driver):
+    WebDriverWait(driver, 5)
+    driver.find_element(*Locators.PERSONAL_ACCOUNT_BUTTON).click()
 
-class TestTransitionPersonalAccount(unittest.TestCase):
+    email_account = driver.find_element(*Locators.EMAIL_ACCOUNT)
+    email_account.send_keys(Credentials.VALID_EMAIL)
 
-    def setUp(self):
-        self.driver = webdriver.Chrome()
-        self.driver.get("https://stellarburgers.nomoreparties.site/")
+    password_account = driver.find_element(*Locators.PASSWORD_ACCOUNT)
+    password_account.send_keys(Credentials.VALID_PASSWORD)
 
-    # Переход по клику на "Личный кабинет"
-    def test_login_through_personal_account_button_success(self):
-        driver = self.driver
-        WebDriverWait(driver, 10)
-        driver.find_element(*Locators.PERSONAL_ACCOUNT_BUTTON).click()
-        # Заполняем данные
-        email_account = driver.find_element(*Locators.EMAIL_ACCOUNT)
-        email_account.send_keys(Credentials.VALID_EMAIL)
+    driver.find_element(*Locators.LOGIN_BUTTON).click()  # вход
 
-        password_account = driver.find_element(*Locators.PASSWORD_ACCOUNT)
-        password_account.send_keys(Credentials.VALID_PASSWORD)
+    driver.find_element(*Locators.CONSTRUCTOR).click()  # переход в конструктор
 
-        driver.find_element(*Locators.LOGIN_BUTTON).click()  # вход
+    expected_url = "https://stellarburgers.nomoreparties.site/"
+    actual_url = driver.current_url
+    assert actual_url == expected_url, f"Ожидался URL {expected_url}, но получен {actual_url}"
 
-        driver.find_element(*Locators.CONSTRUCTOR).click()  # переход в конструктор
+    # Переход из Личного кабинета в Stella Burgers
+def test_through_from_personal_account_in_logo_success(driver):
+    driver.find_element(*Locators.PERSONAL_ACCOUNT_BUTTON).click()
 
-        # Проверяем, что URL соответствует странице конструктора
-        expected_url = "https://stellarburgers.nomoreparties.site/"  # URL
-        actual_url = driver.current_url
-        assert actual_url == expected_url, f"Ожидался URL {expected_url}, но получен {actual_url}"
-        driver.quit()
+    email_account = driver.find_element(*Locators.EMAIL_ACCOUNT)
+    email_account.send_keys(Credentials.VALID_EMAIL)
 
-    # Переход из личного кабинета по клику на логотип "Stellar Burgers"
-    def test_through_from_personal_account_in_logo_success(self):
-        driver = self.driver
-        driver.find_element(*Locators.PERSONAL_ACCOUNT_BUTTON).click()
-        # Заполняем данные
-        email_account = driver.find_element(*Locators.EMAIL_ACCOUNT)
-        email_account.send_keys(Credentials.VALID_EMAIL)
+    password_account = driver.find_element(*Locators.PASSWORD_ACCOUNT)
+    password_account.send_keys(Credentials.VALID_PASSWORD)
 
-        password_account = driver.find_element(*Locators.PASSWORD_ACCOUNT)
-        password_account.send_keys(Credentials.VALID_PASSWORD)
+    driver.find_element(*Locators.LOGIN_BUTTON).click()  # вход
 
-        driver.find_element(*Locators.LOGIN_BUTTON).click() #вход
+    driver.find_element(*Locators.LOGO_STELLA_BURGERS).click()
 
-        driver.find_element(*Locators.LOGO_STELLA_BURGERS).click()
-
-        # Проверяем, что URL соответствует странице с логотипом "Stellar Burgers"
-        expected_url = "https://stellarburgers.nomoreparties.site/"  #URL
-        actual_url = driver.current_url
-        assert actual_url == expected_url, f"Ожидался URL {expected_url}, но получен {actual_url}"
-        driver.quit()
-
-    def tearDown(self):
-        self.driver.quit()
-
-if __name__ == "__main__":
-    unittest.main()
+    WebDriverWait(driver, 5).until(EC.visibility_of_element_located(Locators.LOGO_STELLA_BURGERS))
+    assert driver.find_element(*Locators.LOGO_STELLA_BURGERS).is_displayed()
