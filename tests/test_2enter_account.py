@@ -1,17 +1,9 @@
-import pytest
-from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from locators import Locators
 from helpers import generate_registration_data
 from data import Credentials
 
-@pytest.fixture
-def driver():
-    driver = webdriver.Chrome()
-    driver.get("https://stellarburgers.nomoreparties.site/")
-    yield driver
-    driver.quit()
 
 class TestEnterAccount:
     # 1 Вход по кнопке "Войти в аккаунт на главной

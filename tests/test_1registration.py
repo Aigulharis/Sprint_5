@@ -1,20 +1,10 @@
-import pytest
-import time
-from selenium import webdriver
 from locators import Locators
 from helpers import generate_registration_data
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-@pytest.fixture
-def driver():
-    driver = webdriver.Chrome()
-    driver.get("https://stellarburgers.nomoreparties.site/")
-    yield driver
-    driver.quit()
-
-
-class TestSuccessfulRegistration: #Регистрация
+class TestRegistration:
+    #Регистрация валидные данные
     def test_successful_registration(self, driver):
         registration_data = generate_registration_data()['valid']
 
@@ -37,7 +27,7 @@ class TestSuccessfulRegistration: #Регистрация
         WebDriverWait(driver, 5).until(EC.visibility_of_element_located(Locators.LOGIN_BUTTON))
         assert driver.find_element(*Locators.LOGIN_BUTTON).is_displayed()
 
-class TestInvalidPasswordError: #2 Проверяет отображение ошибки при попытке зарегистрироваться с неправильным паролем
+    #2 Проверяет отображение ошибки при попытке зарегистрироваться с неправильным паролем
     def test_invalid_password_error(self, driver):
         registration_data = generate_registration_data()['invalid']
 

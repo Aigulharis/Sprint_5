@@ -1,15 +1,7 @@
-import pytest
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium import webdriver
 from locators import Locators
 
-@pytest.fixture
-def driver():
-    driver = webdriver.Chrome()
-    driver.get("https://stellarburgers.nomoreparties.site/")
-    yield driver
-    driver.quit()
 
 class TestNavigation:
 
@@ -42,4 +34,3 @@ class TestNavigation:
 
         assert driver.find_element(*Locators.ACTIVE_TAB_BUNS) # проверяем, что кнопка "Булки" акивная
         assert driver.find_element(*Locators.FILLINGS_BUTTON)  # проверяем, кнопка "Начинки" не акивная
-
